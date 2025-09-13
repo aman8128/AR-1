@@ -1,9 +1,18 @@
 import React, { useRef } from "react";
 import model from "./models/3D-model.glb";
+import model1 from "./models/3D-model-ios.usdz";
 
 const SneakerAR = () => {
   const modelRef = useRef(null);
-  
+
+  const handleARClick = () => {
+    if (modelRef.current) {
+      modelRef.current.activateAR(); // direct AR trigger
+    } else {
+      alert("Model not ready");
+    }
+  };
+
   const handle3DView = () => {
     if (modelRef.current) {
       if (!document.fullscreenElement) {
@@ -13,19 +22,21 @@ const SneakerAR = () => {
       }
     }
   };
-  
+
   return (
     <div style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
       <h2>White Sneaker — AR Preview</h2>
 
+      {/* Model Viewer */}
       <model-viewer
+        ref={modelRef}
         src={model}
+        ios-src={model1}  // iOS fallback
         alt="White sneaker 3D model"
         ar
         ar-modes="webxr scene-viewer quick-look"
-        environment-image="neutral"
-        auto-rotate
         camera-controls
+        auto-rotate
         style={{
           width: "100%",
           height: "420px",
@@ -35,7 +46,8 @@ const SneakerAR = () => {
       >
       </model-viewer>
 
-      <div style={{ marginTop: "12px" }}>
+      {/* Buttons */}
+      <div style={{ marginTop: "12px", display: "flex", gap: "12px" }}>
         <button
           style={{
             padding: "10px 14px",
@@ -46,9 +58,7 @@ const SneakerAR = () => {
             cursor: "pointer",
             fontWeight: "600",
           }}
-          onClick={() =>
-            document.querySelector("model-viewer")?.activateAR()
-          }
+          onClick={handleARClick}
         >
           Preview in AR
         </button>
