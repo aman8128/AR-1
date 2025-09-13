@@ -40,6 +40,21 @@ const SneakerAR = () => {
         >
           Preview in AR
         </button>
+
+        <button
+          style={{
+            padding: "10px 14px",
+            borderRadius: "6px",
+            border: "none",
+            background: "#eee",
+            color: "#111",
+            cursor: "pointer",
+            fontWeight: "600",
+          }}
+          onClick={handle3DView}
+        >
+          Open 3D Preview
+        </button>
       </div>
     </div>
   );
