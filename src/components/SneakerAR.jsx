@@ -1,20 +1,15 @@
-import React, { useRef } from "react";
-import "@google/model-viewer";
-import model from './models/3D-model.glb'
+import React from "react";
+import model from "./models/3D-model.glb";
 
 const SneakerAR = () => {
-  const modelRef = useRef(null);
-
   return (
     <div style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
       <h2>White Sneaker — AR Preview</h2>
 
       <model-viewer
-        ref={modelRef}
         src={model}
         alt="White sneaker 3D model"
         ar
-        // Order of fallback → try WebXR → if not supported → Scene Viewer (Android) → Quick Look (iOS)
         ar-modes="webxr scene-viewer quick-look"
         environment-image="neutral"
         auto-rotate
@@ -39,7 +34,9 @@ const SneakerAR = () => {
             cursor: "pointer",
             fontWeight: "600",
           }}
-          onClick={() => modelRef.current?.activateAR()}
+          onClick={() =>
+            document.querySelector("model-viewer")?.activateAR()
+          }
         >
           Preview in AR
         </button>
