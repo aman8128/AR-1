@@ -2,6 +2,18 @@ import React from "react";
 import model from "./models/3D-model.glb";
 
 const SneakerAR = () => {
+  const modelRef = useRef(null);
+  
+  const handle3DView = () => {
+    if (modelRef.current) {
+      if (!document.fullscreenElement) {
+        modelRef.current.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  };
+  
   return (
     <div style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
       <h2>White Sneaker — AR Preview</h2>
