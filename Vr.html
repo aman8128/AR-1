@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AR Preview Demo</title>
+
+  <!-- model-viewer library (official) -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; max-width: 900px; margin: auto; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    model-viewer { width: 100%; height: 420px; background: #f6f6f6; border-radius: 6px; }
+    .row { display: flex; gap: 12px; align-items: center; margin-top: 12px; }
+    button { padding: 10px 14px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+    .ar-btn { background: #0b74de; color: white; }
+    .preview3d-btn { background: #eee; color: #111; }
+    .note { font-size: 13px; color: #555; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+  <h2>White Sneaker — AR Preview</h2>
+
+  <div class="card">
+    <!-- Replace these URLs with your hosted files -->
+    <model-viewer id="mv"
+      src="Tripo+Demo+Model.glb"
+      alt="White sneaker 3D model"
+      ar
+      ar-modes="scene-viewer quick-look webxr"
+      environment-image="neutral"
+      auto-rotate
+      camera-controls
+      exposure="1">
+      <!-- Optional: custom AR button slot (will appear only on AR-capable devices) -->
+      <button slot="ar-button" id="slot-ar-button" style="display:none">View in your space</button>
+    </model-viewer>
+
+    <div class="row">
+      <!-- Custom AR trigger button -->
+      <button class="ar-btn" id="arButton">Preview in AR</button>
+
+      <!-- Fallback: open separate 3D viewer (non-AR, just rotate/zoom) -->
+      <button class="preview3d-btn" id="view3d">Open 3D Preview</button>
+    </div>
+
+    <div class="note" id="note">
+      Tip: Test on a modern Android (Chrome) or iPhone (Safari). If your device doesn't support AR, "Preview in AR" will open the 3D viewer instead.
+    </div>
+  </div>
+
+<script>
+  const mv = document.getElementById('mv');
+  const arButton = document.getElementById('arButton');
+  const view3d = document.getElementById('view3d');
+  const note = document.getElementById('note');
+
+  // When AR is requested programmatically
+  arButton.addEventListener('click', async () => {
+    // If the model-viewer supports the enterAR() API, call it.
+    // This will open Scene Viewer on Android, Quick Look on iOS, or WebXR where available.
+    try {
+      if (typeof mv.enterAR === 'function') {
+        await mv.enterAR();
+      } else {
+        // Fallback: if enterAR not available, just focus the model viewer.
+        mv.scrollIntoView({behavior: 'smooth', block: 'center'});
+        note.textContent = 'AR not supported on this device/browser — showing 3D viewer instead.';
+      }
+    } catch (err) {
+      console.error('Failed to enter AR:', err);
+      note.textContent = 'AR could not be started — check model URLs and that you are on a supported mobile browser (Chrome/Safari).';
+    }
+  });
+
+  // Show 3D viewer in a larger modal-like fullscreen (basic fallback)
+  view3d.addEventListener('click', () => {
+    // Simple fullscreen toggle for the <model-viewer>
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      mv.requestFullscreen().catch(err => {
+        console.warn('Fullscreen request failed:', err);
+      });
+    }
+  });
+
+  // Optional: show hint if AR supported or not
+  (async () => {
+    // model-viewer provides supportsAR() to detect AR capability
+    try {
+      const supports = await mv.supportsAR ? await mv.supportsAR() : false;
+      if (!supports) {
+        note.textContent = 'AR not available on this device/browser. 3D viewer will still work.';
+      } else {
+        note.textContent = 'Device supports AR — click "Preview in AR" to place the model in your space.';
+      }
+    } catch (e) {
+      // ignore
+    }
+  })();
+</script>
+
+</body>
+</html>
