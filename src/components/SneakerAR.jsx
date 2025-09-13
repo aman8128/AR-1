@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import model from "./models/3D-model.glb";
 
 const SneakerAR = () => {
